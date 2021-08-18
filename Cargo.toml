@@ -1,0 +1,10 @@
+[package]
+name = "addcomb_research"
+version = "0.1.0"
+authors = ["Kyle Beatty <w.kyle.beatty@protonmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+addcomb_comp = { git = "https://github.com/Torrencem/addcomb-comp", branch = "main" }
