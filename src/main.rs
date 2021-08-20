@@ -1,6 +1,8 @@
 use std::env;
 use std::rc::Rc;
 
+use chrono::prelude::*;
+
 use addcomb_comp::exactset;
 use addcomb_comp::exactset::GElem;
 
@@ -52,6 +54,11 @@ fn test_conj_odd(s : u32) {
 
 }
 
+// Probably inefficient, always uses (s^2)/2 - 1
+fn test_conj_even(s : u32) {
+    let k = (s * s) / 2 - 1;
+    print_elements_span(k, s);
+}
 
 fn run(s : u32, k : u32) {
     print_elements_span(k, s);
@@ -61,11 +68,27 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
-        1 => { run(5, 1) },
+        1 => {
+            let mut time: DateTime<Local>;
+
+            for s in 32..38_u32 {
+                if s % 2 == 1 {
+                    continue;
+                }
+
+                time = Local::now();
+                println!("{:?}", time);
+                test_conj_even(s);
+            }
+
+            time = Local::now();
+            println!("Concluded at: {:?}", time);
+        },
         2 => {
             let s = args[1].parse().expect("arguments must be integers");
+            let k = (s * s) / 2 - 1;
 
-            run(s, 1);
+            run(s, k);
         },
         3 => {
             let s = args[1].parse().expect("arguments must be integers");
