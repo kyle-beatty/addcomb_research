@@ -16,13 +16,53 @@ fn run(s : u32, k : u32) {
 }
 */
 
+fn print_max_k(s : u32, pair : &Vec<GElem>) {
+    for i in 0..(s * s / 2) {
+        let k = (s * s / 2) - i;
+        let g = Rc::new(vec![2, 2 * k]);
+        let span =
+            exactset::hfold_interval_signed_sumset(&pair, (0, s), g);
+
+        if (span.len() as u32) == 4 * k {
+            println!("max k = {}", k);
+            break;
+        }
+    }
+}
+
+/*
+ * For testing s^2 - s stuff
+ */
+fn print_lambdas(s : i32, a : i32) {
+    let lower_l2 = (a / (2 * (s-2)) as i32) * 2;
+    let upper_l2 = lower_l2 + 2;
+    //println!("{} {}", lower_l2, upper_l2);
+    let mu;
+
+    if upper_l2*(s-2) - a < a - lower_l2*(s-2) {
+         mu = vec![a - upper_l2*(s-2), upper_l2];
+    } else {
+         mu = vec![a - lower_l2*(s-2), lower_l2];
+    }
+
+    if mu[0].abs() + mu[1].abs() <= s {
+        println!(" OG: ({:>3}, {:>3})", mu[0], mu[1]);
+    } else {
+        println!(" OG: ({:>3}, {:>3})  XX", mu[0], mu[1]);
+        println!("NEW: ({:>3}, {:>3})", mu[0] + s - 4, mu[1] - s - 2);
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
         1 => {
-            for s in (2..13).step_by(2) {
-                print_spannable(s);
+            let s = 10;
+
+            for a in 0..(s*s - s) {
+                println!("a ={:>3}", a);
+                print_lambdas(s, a);
             }
         },
         2 => {
@@ -36,6 +76,22 @@ fn main() {
             let k = args[2].parse().expect("arguments must be integers");
 
             print_spanning_pairs(k, s);
+        },
+        6 => {
+            let s = args[1].parse().expect("arguments must be integers");
+
+            let a = args[2].parse().expect("arguments must be integers");
+            let x = args[3].parse().expect("arguments must be integers");
+            let b = args[4].parse().expect("arguments must be integers");
+            let y = args[5].parse().expect("arguments must be integers");
+
+            //TODO when defining pair use mod to fit too high values
+            //into group
+            let p = GElem(vec![a, x]);
+            let q = GElem(vec![b, y]);
+            let pair = vec![p, q];
+
+            print_max_k(s, &pair);
         },
         7 => {
             let s = args[1].parse().expect("arguments must be integers");
