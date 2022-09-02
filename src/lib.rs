@@ -125,6 +125,81 @@ pub mod spanning {
         println!("  k = s^2 / 2 given by Park's\n");
     }
 
+    pub fn print_pair_span_four(k: u32, s: u32) {
+        let g = Rc::new(vec![4, 4 * k]);
+
+        for pair in <Vec<GElem> as SetLike>::each_set_exact(g.clone(), 2) {
+            // Filter out "upper half"
+            if (pair[0].0[1] > 2*k) || (pair[1].0[1] > 2*k) {
+                //println!("{}, {}: {}", pair[0].0[1], pair[1].0[1], k);
+                continue;
+            }
+
+            // Filter out 3's
+            if pair[0].0[0] == 3 || pair[1].0[0] == 3 {
+                continue;
+            }
+
+            if does_pair_span_four(k, s, &g, &pair) {
+                println!("  spanning pair: {:?}", pair);
+            }
+        }
+    }
+
+    pub fn pair_span_four(k: u32, s: u32) -> Option<Vec<GElem>> {
+        let g = Rc::new(vec![4, 4 * k]);
+
+        for pair in <Vec<GElem> as SetLike>::each_set_exact(g.clone(), 2) {
+            // Filter out "upper half"
+            if (pair[0].0[1] > 2*k) || (pair[1].0[1] > 2*k) {
+                //println!("{}, {}: {}", pair[0].0[1], pair[1].0[1], k);
+                continue;
+            }
+
+            if does_pair_span_four(k, s, &g, &pair) {
+                return Some(pair);
+            }
+        }
+
+        None
+    }
+
+    pub fn does_pair_span_four(k: u32, s: u32, g: &Rc<Vec<u32>>, pair: &Vec<GElem>) -> bool {
+        // Puts the pair into form {(c, x), (d, y)}
+        let p = &pair[0];
+        let q = &pair[1];
+        let c = p.0[0];
+        let x = p.0[1];
+        let d = q.0[0];
+        let y = q.0[1];
+
+        // Optimization 1 + bonus:
+        // Proposition 10 of Park's Conjecture proof paper
+        // Should still apply for 4 x 4k
+        if c % 2 == 0 {
+            if (d % 2 == 0) || /* Prop 10 : */ (x % 2 == 0) {
+                return false;
+            }
+        } else if (d % 2 == 0) && (y % 2 == 0) { /* more prop 10*/
+            return false;
+        }
+
+        // Optimization 2
+        if gcd(4*k, gcd(x, y)) != 1 {
+            return false;
+        }
+
+        // Finally, check span
+        // WARNING this should be the same as the size of g, but if somebody
+        // passes this the wrong stuff then we're screwed
+        let g_size = 16 * k;
+
+        let span = exactset::hfold_interval_signed_sumset(&pair, (0, s), g.clone());
+        let size = span.len() as u32;
+
+        size == g_size
+    }
+
     // NOTE OLD FUNCTION
     // REMINDER this is for use with k above Haesoo's conjectured upper limit
     // We've modified this so much that it excludes valid spanning sets for lower k
