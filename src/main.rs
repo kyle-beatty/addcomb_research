@@ -1,6 +1,11 @@
-use std::env;
+#![allow(dead_code)]
+#![allow(unused_imports)]
+// TODO remove these eventually
 
-use addcomb_research::spanning::*;
+use std::env;
+use addcomb_research::phi::*;
+use addcomb_research::john::*;
+use addcomb_research::noah::*;
 
 //use addcomb_comp::setlike::SetLike;
 use addcomb_comp::exactset;
@@ -9,12 +14,6 @@ use addcomb_comp::exactset;
 use std::rc::Rc;
 use addcomb_comp::exactset::GElem;
 
-
-/*
-fn run(s : u32, k : u32) {
-    println!("{:?}", do_two_elements_span(k, s));
-}
-*/
 
 fn print_max_k(s : u32, pair : &Vec<GElem>) {
     for i in 0..(s * s / 2) {
@@ -35,9 +34,40 @@ fn main() {
 
     match args.len() {
         1 => {
+            println!("no arguments given");
+        },
+        _ => {
+            if args[1].parse::<u32>().is_ok() {
+                kyle_main(&args);
+            } else {
+                main_index(&args);
+            }
+        }
+    }
+}
+
+fn main_index(args : &Vec<String>) {
+    //println!("Main index: {:?}", args);
+    match args[1].as_str() {
+        "john" => {
+            john_main(&args);
+        },
+        "noah" => {
+            noah_main(&args);
+        },
+        _ => {
+            println!("Invalid name given");
+        }
+    }
+}
+
+fn kyle_main(args : &Vec<String>) {
+    match args.len() {
+        1 => {
             let s = 8;
             let k = 6;
             println!("s = {}, k = {}", s, k);
+            print_spanning_pairs(k, s);
 
             /*
             match pair_span_four(k, s) {
@@ -49,12 +79,14 @@ fn main() {
                 }
             }*/
 
+            /*
             println!("Z_4 x Z_{}", 4 * k);
             print_pair_span_four(k, s);
             println!();
             println!("Z_2 x Z_{}", 8 * k);
             print_spanning_pairs(4 * k, s);
             println!();
+            */
         },
         2 => {
             let s = args[1].parse().expect("arguments must be integers");
