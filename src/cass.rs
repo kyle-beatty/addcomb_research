@@ -54,6 +54,7 @@ pub fn do_three_elements_span(n: u32, s: u32) -> Option<Vec<GElem>> {
     let g = Rc::new(vec![n]);
 
     for A in <Vec<GElem> as SetLike>::each_set_exact_no_zero(g.clone(), 3) {
+        //TODO filter out "upper-half" elements
         if does_subset_span(n, s, &g, &A) {
             return Some(A);
         }
