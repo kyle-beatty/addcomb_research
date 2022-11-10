@@ -71,7 +71,13 @@ pub fn does_subset_span(n : u32, s: u32, g: &Rc<Vec<u32>>, A: &Vec<GElem>)
 
         //println!("span: {:?}", span);
         //
-        //TODO find out weird behavior with extra 3D "zero" element
-        // that makes this necessary
-        span.len() as u32 == (n+1)
+        //
+        let value = span.len() as u32;
+        
+        //if value >= n {
+        //    println!("{}, {:?}", value, span);
+        //    
+        //}
+
+        value >= n
 }
