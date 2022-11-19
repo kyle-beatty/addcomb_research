@@ -9,6 +9,7 @@ use addcomb_research::noah::noah_main;
 use addcomb_research::junxue::junxue_main;
 use addcomb_research::quentin::quentin_main;
 use addcomb_research::cass::cass_main;
+use addcomb_research::ryan::ryan_main;
 
 //use addcomb_comp::setlike::SetLike;
 use addcomb_comp::exactset;
@@ -66,6 +67,9 @@ fn main_index(args : &Vec<String>) {
         },
         "cass" => {
             cass_main(&args);
+        },
+        "ryan" => {
+            ryan_main(&args);
         },
         _ => {
             println!("Invalid name given");
