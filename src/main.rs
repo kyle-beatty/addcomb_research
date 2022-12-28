@@ -38,7 +38,8 @@ fn main() {
 
     match args.len() {
         1 => {
-            println!("no arguments given");
+            //println!("no arguments given");
+            largest_group_spanned(4);
         },
         _ => {
             if args[1].parse::<u32>().is_ok() {
@@ -105,10 +106,11 @@ fn kyle_main(args : &Vec<String>) {
             */
         },
         2 => {
-            let s = args[1].parse().expect("arguments must be integers");
+            let max_s : u32 = args[1].parse().expect("arguments must be integers");
 
-            //run(s, 1);
-            print_spannable(s);
+            for s in 1..(max_s+1) {
+                largest_group_spanned(s);
+            }
         },
         3 => {
             let s = args[1].parse().expect("arguments must be integers");

@@ -5,6 +5,80 @@ use addcomb_comp::comb::gcd;
 use std::rc::Rc;
 use addcomb_comp::exactset::GElem;
 
+pub fn largest_group_spanned(s : u32) {
+    println!("s = {}", s);
+    let mut current_max : u32 = 4 * (s * s / 2);
+    println!("Starting max: {}", current_max);
+    let upper_bound = (s*s) + (s+1)*(s+1);
+    println!("Upper bound: {}", upper_bound);
+
+    for n_1 in 3..(2*s+1) {
+        // We're not filtering these out yet
+        //if (2*s + 1) % n_1 != 0 && n_1 != s {
+        //    println!("Continue");
+        //    continue;
+        //}
+        
+        //println!("Testing n_1 = {}", n_1);
+
+        for k in 1..(s*s) {
+            if n_1 * n_1 * k <= current_max {
+                continue;
+            }
+
+            if n_1 * n_1 * k > upper_bound {
+                continue;
+            }
+
+            println!("Testing (n_1, k) = ({}, {})", n_1, k);
+            match do_two_elements_span_general(n_1, k, s) {
+                Some(pair) => {
+                    current_max = n_1 * n_1 * k;
+                    println!("New maximum: {}", current_max);
+                    println!("  Group: Z_{} x Z_{}", n_1, n_1*k);
+                    println!("  Pair : {:?}", pair);
+                    println!();
+                },
+                None => {
+                }
+            }
+        }
+    }
+
+    println!();
+    println!("MAXIMUM for s = {} is |G| = {}\n", s, current_max);
+}
+
+pub fn do_two_elements_span_general(n_1 : u32, k : u32, s : u32)
+    -> Option<Vec<GElem>> {
+    let g = Rc::new(vec![n_1, n_1 * k]);
+    let g_size = n_1 * n_1 * k;
+    // upper bound, equal to 2s^2 + 2s + 1
+    let upper_bound = (s * s) + (s+1)*(s+1);
+
+    if g_size > upper_bound {
+        return None;
+    }
+
+    for pair in <Vec<GElem> as SetLike>::each_set_exact(g.clone(), 2) {
+        // Filter out "upper half"
+        // added a +1 just to be safe
+        if (pair[0].0[1] > n_1 * k / 2 + 1) || (pair[1].0[1] > n_1 * k / 2 + 1) {
+            //println!("{}, {}: {}", pair[0].0[1], pair[1].0[1], k);
+            continue;
+        }
+
+        let span = exactset::hfold_interval_signed_sumset(&pair, (0, s), g.clone());
+        let size = span.len() as u32;
+        
+        if size == g_size {
+            return Some(pair);
+        }
+    }
+
+    None
+}
+
 pub fn do_two_elements_span(k: u32, s: u32) -> Option<Vec<GElem>> {
     let g = Rc::new(vec![2, 2 * k]);
     let g_size = 4 * k;
@@ -28,6 +102,7 @@ pub fn do_two_elements_span(k: u32, s: u32) -> Option<Vec<GElem>> {
 
     None
 }
+
 
 // Make sure we pass it a pair of spanning elements
 pub fn does_pair_span(k: u32, s: u32, g: &Rc<Vec<u32>>, pair: &Vec<GElem>) -> bool {
