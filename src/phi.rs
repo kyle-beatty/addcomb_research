@@ -5,6 +5,29 @@ use addcomb_comp::comb::gcd;
 use std::rc::Rc;
 use addcomb_comp::exactset::GElem;
 
+/*
+ * Finds spannable groups of given order
+ */
+pub fn find_spannable(n : u32, s : u32) {
+    // We already have a theorem for all n_1 = 2, so will check later
+    for n_1 in 3..(2*s + 1) {
+        if n % (n_1 * n_1) != 0 {
+            continue;
+        }
+
+        //TODO should this be a let?
+        let k = n / (n_1 * n_1);
+        match do_two_elements_span_general(n_1, k, s) {
+            Some(pair) => {
+                println!("  Z_{} x Z_{}: A = {:?}", n_1, n_1*k, pair);
+            },
+            None => {
+                println!("  Z_{} x Z_{}: NOT SPANNED", n_1, n_1*k);
+            }
+        }
+}
+}
+
 pub fn largest_group_spanned(s : u32) {
     println!("s = {}", s);
     let mut current_max : u32 = 4 * (s * s / 2);

@@ -38,8 +38,13 @@ fn main() {
 
     match args.len() {
         1 => {
-            //println!("no arguments given");
-            largest_group_spanned(4);
+            for s in 5..9 {
+                println!("Testing s = {}", s);
+
+                for n in 27..((s*s) + (s+1)*(s+1)) {
+                    find_spannable(n, s);
+                }
+            }
         },
         _ => {
             if args[1].parse::<u32>().is_ok() {
@@ -81,29 +86,13 @@ fn main_index(args : &Vec<String>) {
 fn kyle_main(args : &Vec<String>) {
     match args.len() {
         1 => {
-            let s = 8;
-            let k = 6;
-            println!("s = {}, k = {}", s, k);
-            print_spanning_pairs(k, s);
+            for s in 5..6 {
+                println!("Testing s = {}", s);
 
-            /*
-            match pair_span_four(k, s) {
-                Some(pair) => {
-                    println!("Spanning pair: {:?}", pair);
-                },
-                None => {
-                    println!("No spanning pair for (k, s) = ({}, {})", k, s);
+                for n in 27..((s*s) + (s+1)*(s+1)) {
+                    find_spannable(n, s);
                 }
-            }*/
-
-            /*
-            println!("Z_4 x Z_{}", 4 * k);
-            print_pair_span_four(k, s);
-            println!();
-            println!("Z_2 x Z_{}", 8 * k);
-            print_spanning_pairs(4 * k, s);
-            println!();
-            */
+            }
         },
         2 => {
             let max_s : u32 = args[1].parse().expect("arguments must be integers");
